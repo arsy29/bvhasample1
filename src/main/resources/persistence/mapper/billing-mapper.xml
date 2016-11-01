@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bvha.billing.persistence.mapper.billing">
+  <select id="BillingDetails" resultType="hashmap" parameterType="hashmap">
+    select id,
+    	MEMBER as member,
+    	ASSOC_FEE as assocFee,
+    	PREV_READING as prevReading,
+    	CURR_READING as currReading,
+    	WATER_AMOUNT as waterAmount,
+    	PREVIOUS_TOTAL as previousTotal,
+    	OTHER_DESC as otherDescription,
+    	OTHER_AMOUNT as otherAmount,
+    	BILLING_PERIOD as period,
+    	PREVIOUS_PAYMENT as previousPaymentTotal,
+    	CURRENT_TOTAL as currentTotal,
+    	GRAND_TOTAL as grandTotal,
+    	PREVIOUS_BILLING_PERIOD as prevBillingId
+    from
+    	billing_details
+    where 
+    	BILLING_PERIOD = #{periodId}
+    	AND MEMBER = #{memberId}
+  </select>
+
+  <select id="BillingYear" resultType="java.lang.String" >
+    select distinct period_year as periodYear 
+    from billing_period 
+    order by period_year desc
+  </select>
+
+  <select id="BillingMonth" resultType="hashmap" parameterType="java.lang.String">
+    select ID as id,
+        PERIOD_MONTH as periodMonth,
+        period_cutoff as periodCutOff
+    from
+        billing_period
+    where
+        PERIOD_YEAR = #{periodYear}
+    order by period_month desc
+  </select>
+
+  <select id="MemberBillList" resultType="hashmap" parameterType="long">
+    select member.id as id,
+    member.fname as fName,
+    member.lname as lName,
+    billing.grand_total - payment.total_payment as remaining
+from member inner join billing_details as billing on member.id = billing.member
+    inner join (select member, billing, sum(amount) as total_payment from payment group by member, billing ) as payment on payment.member = member.id and payment.BILLING = billing.id
+where billing.billing_period = #{periodId}
+  </select>
+
+</mapper>
