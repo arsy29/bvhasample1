@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bvha.billing.persistence.mapper.reports">
+
+  <resultMap id="PaymentMap" type="hashmap">
+    <id property="id" column="p_id"/>
+    <result property="amount" column="paymentAmount"/>
+    <result property="paymentDate" column="paymentDate"/>
+    <result property="receiptNo" column="receiptNo"/>
+  </resultMap>
+  <resultMap id="BillMap" type="hashmap">
+      <id property="id" column="id"/>
+      <result property="fname" column="fname"/>
+      <result property="lname" column="lname"/>
+      <result property="address" column="address"/>
+      <result property="assocFee" column="assocFee"/>
+      <result property="prevReading" column="prevReadinge"/>
+      <result property="currReading" column="currReading"/>
+      <result property="waterAmount" column="waterAmount"/>
+      <result property="previousTotal" column="previousTotal"/>
+      <result property="withBond" column="withBond"/>
+      <result property="otherDesc" column="otherDesc"/>
+      <result property="otherAmount" column="otherAmount"/>
+      <result property="currentTotal" column="currentTotal"/>
+      <result property="previousPayment" column="previousPayment"/>
+      <result property="grandTotal" column="grandTotal"/>
+      <collection property="payment" column="b_id" ofType="hashmap" javaType="ArrayList" resultMap="PaymentMap"/>
+  </resultMap>
+  <select id="BillingDetailsAll" resultMap="BillMap">
+    select 
+      member.id as id,
+      member.fname,
+      member.lname,
+      member.address,
+      billing.id as b_id,
+      billing.assoc_fee as assocFee,
+      billing.prev_reading as prevReading,
+      billing.curr_reading as currReading,
+      billing.water_amount as waterAmount,
+      billing.previous_total as previousTotal,
+      billing.with_Bond as withBond,
+      billing.other_desc as otherDesc,
+      billing.other_amount as otherAmount,
+      billing.current_total as currentTotal,
+      billing.grand_total as grandTotal,
+      billing.previous_payment as previousPayment,
+      payment.id as p_id,
+      payment.amount as paymentAmount,
+      payment.payment_date as paymentDate,
+      payment.receipt_no as receiptNo
+    from member inner join 
+      billing_details billing on member.id = billing.member
+      inner join payment on payment.billing = billing.previous_billing_period
+    where billing.BILLING_PERIOD  = #{periodId};
+  </select>
+
+  <select id="BillingDetails" resultMap="BillMap">
+    select 
+      member.id as id,
+      member.fname,
+      member.lname,
+      member.address,
+      billing.id as b_id,
+      billing.assoc_fee as assocFee,
+      billing.prev_reading as prevReading,
+      billing.curr_reading as currReading,
+      billing.water_amount as waterAmount,
+      billing.previous_total as previousTotal,
+      billing.with_Bond as withBond,
+      billing.other_desc as otherDesc,
+      billing.other_amount as otherAmount,
+      billing.current_total as currentTotal,
+      billing.grand_total as grandTotal,
+      billing.previous_payment as previousPayment,
+      payment.id as p_id,
+      payment.amount as paymentAmount,
+      payment.payment_date as paymentDate,
+      payment.receipt_no as receiptNo
+    from member inner join 
+      billing_details billing on member.id = billing.member
+      inner join payment on payment.billing = billing.previous_billing_period
+    where billing.BILLING_PERIOD  = #{periodId}
+    AND member.id in
+    <foreach item="item" index="index" collection="list"
+    		open="(" separator="," close=")">
+    		#{item}
+    	</foreach>
+    ;
+  </select>
+
+
+
+ 
+
+</mapper>

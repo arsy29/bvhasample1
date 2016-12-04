@@ -19,5 +19,7 @@
     <mapper resource="/persistence/mapper/billing-mapper.xml"/>
     <mapper resource="/persistence/mapper/payment-mapper.xml"/>
     <mapper resource="/persistence/mapper/member-mapper.xml"/>
+     <mapper resource="/persistence/mapper/reports-mapper.xml"/>
+     <mapper resource="/persistence/mapper/config-mapper.xml"/>
   </mappers>
 </configuration>

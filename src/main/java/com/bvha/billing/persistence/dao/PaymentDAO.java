@@ -22,6 +22,32 @@ public class PaymentDAO {
 		return paymentList;
 	}
 
+	public int addUpdatePaymentDetails( Map row) throws Exception{
+		int result = 0;
+		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
+			if(row.containsKey("id")){
+				result = session.update("com.bvha.billing.persistence.mapper.payment.UpdatePayment", row);
+			}else{
+				result = session.insert("com.bvha.billing.persistence.mapper.payment.AddPayment", row);
+			}
+			session.commit();
+		}catch(Exception e){
+			throw e;
+		}
+		return result;
+	}
+
+	 public int deletePaymentById( Long paymentId) throws Exception{
+		int result = 0;
+		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
+			result = session.delete("com.bvha.billing.persistence.mapper.payment.DeletePayment", paymentId);
+			session.commit();
+		}catch(Exception e){
+			throw e;
+		}
+		return result;
+	} 
+
 	
 }
 

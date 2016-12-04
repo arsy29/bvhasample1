@@ -27,7 +27,7 @@ public class BillingAPI extends API{
      *
      * @return String that will be returned as a text/plain response.
      */
-    private BillingDAO getBillingDao(){
+    private BillingDAO getService(){
         if(billingDao == null){
             billingDao = new BillingDAO();
         }
@@ -38,7 +38,7 @@ public class BillingAPI extends API{
     @Produces(MediaType.APPLICATION_JSON)
     public MapResponse billingDetails(@PathParam("periodId") String periodId, @PathParam("memberId") String memberId) {
         try{
-           return handleSuccessMap(getBillingDao().getBillingDetails(Long.parseLong(periodId),Long.parseLong(memberId)));
+           return handleSuccessMap(getService().getBillingDetails(Long.parseLong(periodId),Long.parseLong(memberId)));
         }catch(Exception e){
            return (MapResponse)handleException(e, new MapResponse());
         }
@@ -49,7 +49,7 @@ public class BillingAPI extends API{
     @Produces(MediaType.APPLICATION_JSON)
     public StringListResponse periodYear(){
         try{
-            return handleSuccessListString(getBillingDao().getPeriodYear());
+            return handleSuccessListString(getService().getPeriodYear());
         }catch(Exception e){
             return (StringListResponse)handleException(e, new StringListResponse());
         }
@@ -59,7 +59,7 @@ public class BillingAPI extends API{
     @Produces(MediaType.APPLICATION_JSON)
     public MapListResponse period(@PathParam("yearId") String yearId){
         try{
-            return handleSuccessMapList(getBillingDao().getPeriodByYear(yearId));
+            return handleSuccessMapList(getService().getPeriodByYear(yearId));
         }catch(Exception e){
             return (MapListResponse)handleException(e, new MapListResponse());
         }
@@ -69,7 +69,7 @@ public class BillingAPI extends API{
     @Produces(MediaType.APPLICATION_JSON)
     public MapListResponse memberList(@PathParam("periodId") String periodId){
         try{
-            return handleSuccessMapList(getBillingDao().getMemberBillList(Long.parseLong(periodId)));
+            return handleSuccessMapList(getService().getMemberBillList(Long.parseLong(periodId)));
         }catch(Exception e){
             return (MapListResponse)handleException(e, new MapListResponse());
         }

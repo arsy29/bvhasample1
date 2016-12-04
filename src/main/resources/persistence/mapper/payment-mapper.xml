@@ -13,4 +13,21 @@
     where billing = #{billingId}
   </select>
 
+  <insert id="AddPayment">
+    insert into payment(member, billing, amount, payment_date, receipt_no) values (#{memberId}, #{billingId}, #{amount}, #{paymentDate}, #{receiptNo})
+  </insert>
+
+  <insert id="UpdatePayment">
+    update payment set member = #{memberId},
+      billing = #{billingId},
+      amount = #{amount},
+      payment_date = #{paymentDate},
+      receipt_no = #{receiptNo}
+    where id = #{id}
+  </insert>
+
+  <delete id="DeletePayment">
+    delete from payment where id = #{id}
+  </delete>
+ 
 </mapper>

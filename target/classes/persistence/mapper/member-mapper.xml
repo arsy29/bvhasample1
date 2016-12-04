@@ -6,4 +6,55 @@
 <mapper namespace="com.bvha.billing.persistence.mapper.member">
 
 
+
+  <select id="MemberList" resultType="hashmap">
+    select 
+      id,
+      fname,
+      lname,
+      address,
+      status,
+      monthly_due as monthlyDues,
+      with_bond as withBond
+    from member
+  </select>
+
+  <insert id="AddMember" useGeneratedKeys="true" keyProperty="id" parameterType="map">
+    insert into member(FNAME, LNAME, ADDRESS, STATUS, MONTHLY_DUE, WITH_BOND) values (
+    #{fname}, #{lname}, #{address}, #{status}, #{monthlyDues}, #{withBond})
+  </insert>
+
+  <update id="UpdateMember">
+    update member set fname = #{fname},
+      lname = #{lname},
+      address = #{address},
+      status = #{status},
+      monthly_due = #{monthlyDues},
+      with_bond = #{withBond}
+    where id = #{id}
+  </update>
+
+  <insert id="AddContact">
+    insert into contact(member, contact_type, number) values (
+    #{member}, #{contactType}, #{number})
+  </insert>
+
+  <update id="UpdateContact">
+    update contact set contact_type = #{contactType},
+      number = #{number}
+    where id = #{id}
+  </update>
+
+  <select id="ContactList" resultType="hashmap" parameterType="long">
+    select id,
+      contact_type as contactType,
+      number
+    from contact
+    where member = #{id}
+  </select>
+
+  <delete id="DeleteContact">
+    delete from contact where id = #{id}
+  </delete>
+  
 </mapper>

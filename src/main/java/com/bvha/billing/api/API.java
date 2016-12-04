@@ -18,9 +18,13 @@ public abstract class API{
     private final String SUCCESS = "SUCCESS";
 
     public Response handleException(Exception e, Response response){
-        StringWriter sw = new StringWriter();
-        e.printStackTrace(new PrintWriter(sw));
-        response.setResponseMessage(sw.toString());
+        if(e != null){
+        	StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            response.setResponseMessage(sw.toString());
+        }else{
+        	response.setResponseMessage("FAIL");
+        }
         response.setResponseStatus(0);
 
         return response;
