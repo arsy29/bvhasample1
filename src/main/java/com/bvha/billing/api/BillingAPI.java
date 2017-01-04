@@ -1,9 +1,13 @@
 package com.bvha.billing.api;
 
 
+import java.util.Map;
+import java.util.List;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import com.bvha.billing.persistence.dao.BillingDAO;
@@ -75,6 +79,40 @@ public class BillingAPI extends API{
         }
     }
 
+    @GET @Path("/generate")
+    @Produces(MediaType.APPLICATION_JSON)
+    public MapResponse generateBilling(){
+        try{
+            return handleSuccessMap(getService().generateBilling());
+        }catch(Exception e){
+            return (MapResponse)handleException(e, new MapResponse());
+        }
+    }
+
+    @GET @Path("/checkForDraft")
+    @Produces(MediaType.APPLICATION_JSON)
+    public MapResponse checkForDraft(){
+        try{
+            return handleSuccessMap(getService().checkForDraft());
+        }catch(Exception e){
+            return (MapResponse)handleException(e, new MapResponse());
+        }
+    }
+
+    @POST @Path("/Submit")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response submit(Map response){
+        try{
+            if(getService().submit(response) > 0){
+                return handleSuccess(new Response());
+            }else{
+                return handleException(null, new Response());
+            }
+        }catch(Exception e){
+            return handleException(e, new Response());
+        }
+    }
 
 
 }

@@ -61,6 +61,62 @@ public class BillingDAO {
 
 		return memberList;
 	}
+
+	public Map generateBilling() throws Exception{
+		Map bill = new HashMap();
+
+		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
+			bill.put("period", session.selectOne("com.bvha.billing.persistence.mapper.billing.GeneratePeriod"));
+			bill.put("list",session.selectList("com.bvha.billing.persistence.mapper.billing.GenerateBill"));
+		}catch(Exception e){
+			throw e;
+		}
+
+		return bill;
+	}
+
+	public Map checkForDraft() throws Exception{
+		Map bill = new HashMap();
+
+		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
+			Map period = (Map)session.selectOne("com.bvha.billing.persistence.mapper.billing.CheckForDraft");
+			bill.put("period",period);
+			bill.put("list",session.selectList("com.bvha.billing.persistence.mapper.billing.getDraftBillingDetails",period.get("id")));
+		}catch(Exception e){
+			e.printStackTrace();
+			throw e;
+		}
+
+		return bill;
+	}
+
+	public int submit( Map map) throws Exception{
+		int result = 0;
+		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
+			Map period = (Map)map.get("period");
+			if(period.get("status").toString().equals("A")){
+				session.update("com.bvha.billing.persistence.mapper.billing.archivePeriod");
+			}
+			if((boolean)map.get("isNew")){
+				session.insert("com.bvha.billing.persistence.mapper.billing.newPeriod", period);
+				for(Map bill: (List<Map>)map.get("list")){
+					bill.put("periodId", period.get("id"));
+				}
+				result = session.insert("com.bvha.billing.persistence.mapper.billing.Submit", map);
+			}else{
+				result = session.update("com.bvha.billing.persistence.mapper.billing.updatePeriod", period);
+				for(Map row : (List<Map>)map.get("list")){
+					result += session.update("com.bvha.billing.persistence.mapper.billing.update", row);
+				}
+			}
+			session.commit();
+		}catch(Exception e){
+			throw e;
+		}
+		return result;
+	}
+
+	
 }
 
 
