@@ -70,8 +70,8 @@ where billing.billing_period = #{periodId}
       ,member.lName
       ,member.address
       ,member.with_bond as withBond
-      ,ASSOC_FEE as assocFee
-      ,ASSOC_FEE as currentTotal
+      ,MONTHLY_DUE as assocFee
+      ,MONTHLY_DUE as currentTotal
       ,curr_reading as prevReading
       ,CURR_READING as currReading
       ,grand_total as previousTotal
@@ -90,13 +90,13 @@ where billing.billing_period = #{periodId}
   </select>
 
   <select id="CheckForDraft" resultType="hashmap">
-    select  
+    select main.* from  (select 1 from dual) tmp left join (select  
       id,
       PERIOD_YEAR as periodYear,
       PERIOD_MONTH as periodMonth,
       PERIOD_DATE as periodDate,
       PERIOD_CUTOFF as periodCutoff
-    from billing_period where status='S';
+    from billing_period where status='S') main  on 1=1;;
   </select>
 
   <select id="getDraftBillingDetails" resultType="hashmap">
@@ -105,16 +105,17 @@ where billing.billing_period = #{periodId}
       member.lname as lName,
       member.fname as fName,
       member.address as address,
+      member.monthly_due as assocFee,
       billing_details.id as billingId,
-      billing_details.assoc_fee as assocFee,
       billing_details.prev_reading as prevReading,
       billing_details.curr_reading as currReading,
       billing_details.water_amount as waterAmount,
-      billing_details.previous_total as previousTotal,
       billing_details.with_bond as withBond,
       billing_details.other_desc as otherDescription,
       billing_details.other_amount as otherAmount,
-      billing_details.previous_payment as previousPayment,
+      billing_details.previous_total as previousTotal,
+      billing_details.previous_payment as previousPaymentTotal,
+      billing_details.previous_total - billing_details.previous_payment as remaining,
       billing_details.current_total as currentTotal,
       billing_details.grand_total as grandTotal,
       billing_details.previous_billing_period as previousBillingPeriod,
@@ -166,7 +167,7 @@ where billing.billing_period = #{periodId}
       ,#{model.withBond}
       ,#{model.otherDescription}
       ,#{model.otherAmount}
-      ,#{model.previousPayment}
+      ,#{model.previousPaymentTotal}
       ,#{model.currentTotal}
       ,#{model.grandTotal}
       ,#{model.prevBillingPeriod}

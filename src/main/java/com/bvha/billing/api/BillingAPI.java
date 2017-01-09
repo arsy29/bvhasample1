@@ -89,6 +89,16 @@ public class BillingAPI extends API{
         }
     }
 
+     @GET @Path("/reset")
+        @Produces(MediaType.APPLICATION_JSON)
+        public MapListResponse resetBilling(){
+            try{
+                return handleSuccessMapList(getService().reset());
+            }catch(Exception e){
+                return (MapListResponse)handleException(e, new MapListResponse());
+            }
+        }
+
     @GET @Path("/checkForDraft")
     @Produces(MediaType.APPLICATION_JSON)
     public MapResponse checkForDraft(){

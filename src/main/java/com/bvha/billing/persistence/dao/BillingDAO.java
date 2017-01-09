@@ -75,11 +75,26 @@ public class BillingDAO {
 		return bill;
 	}
 
+	public List<Map> reset() throws Exception{
+		List<Map> bill = null;
+
+		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
+			bill = session.selectList("com.bvha.billing.persistence.mapper.billing.GenerateBill");
+		}catch(Exception e){
+			throw e;
+		}
+
+		return bill;
+	}
+
 	public Map checkForDraft() throws Exception{
 		Map bill = new HashMap();
 
 		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
 			Map period = (Map)session.selectOne("com.bvha.billing.persistence.mapper.billing.CheckForDraft");
+			if(period.get("id") == null){
+				return null;
+			}
 			bill.put("period",period);
 			bill.put("list",session.selectList("com.bvha.billing.persistence.mapper.billing.getDraftBillingDetails",period.get("id")));
 		}catch(Exception e){

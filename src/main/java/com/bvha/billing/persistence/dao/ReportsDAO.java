@@ -8,11 +8,11 @@ import java.util.List;
 
 public class ReportsDAO {
 
-	public List<Map> getBillAll(long periodId) throws Exception{
+	public List<Map> getBillAll(Map map) throws Exception{
 		List<Map> memberList = null;
 
 		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
-			memberList = session.selectList("com.bvha.billing.persistence.mapper.reports.BillingDetailsAll", periodId);
+			memberList = session.selectList("com.bvha.billing.persistence.mapper.reports.BillingDetailsAll", map);
 		}catch(Exception e){
 			throw e;
 		}

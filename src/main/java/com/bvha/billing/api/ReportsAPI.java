@@ -1,6 +1,9 @@
 package com.bvha.billing.api;
 
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Iterator;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -8,12 +11,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import com.bvha.billing.persistence.dao.ReportsDAO;
-import com.bvha.billing.api.dto.Response;
-import com.bvha.billing.api.dto.MapListResponse;
-import com.bvha.billing.api.dto.StringListResponse;
-import com.bvha.billing.api.dto.MapResponse;
 import com.bvha.billing.api.API;
+import com.bvha.billing.reports.PDFGenerator;
+import com.bvha.billing.reports.pojo.BillingStatementPojo;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import java.io.ByteArrayInputStream;
 
 /**
  * Root resource (exposed at "BillingAPI" path)
@@ -36,67 +40,40 @@ public class ReportsAPI extends API{
         return dao;
     }
 
-    @GET @Path("/getBillAll/{periodId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public MapListResponse billingDetails(@PathParam("periodId") String periodId) {
+
+    @POST @Path("/billing-statement")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/pdf")
+    public Response billingStatement(Map reponse) throws Exception{
+        ResponseBuilder response = null;
         try{
-           return handleSuccessMapList(getService().getBillAll(Long.parseLong(periodId)));
+           List<Map> memberList = getService().getBillAll(reponse);
+           List<Object> pojoList = new ArrayList<Object>();
+           Iterator memberIterator = memberList.iterator();
+           while(memberIterator.hasNext()){
+                Map pojo1, pojo2 = null, pojo3 = null;
+                pojo1 = (Map)memberIterator.next();
+                if(memberIterator.hasNext()){
+                    pojo2 = (Map)memberIterator.next();
+                    if(memberIterator.hasNext()){
+                        pojo3 = (Map)memberIterator.next();
+                    }
+                }
+                pojoList.add(new BillingStatementPojo(pojo1, pojo2, pojo3));
+           }
+           byte[] pdf = new PDFGenerator(pojoList, reponse, "C:\\Billing_Statement2.jasper").getPDF();
+           ByteArrayInputStream inputStream = new ByteArrayInputStream(pdf);
+           response = Response.ok((Object) inputStream);
+           response.type("application/pdf");
+           response.header("Content-Disposition",  "filename=billing_statement");
         }catch(Exception e){
-           return (MapListResponse)handleException(e, new MapResponse());
+            throw e;
         }
+       return response.build();
+
     } 
 
-    @POST @Path("/getBillById")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public MapListResponse billingDetails(Map map) {
-        try{
-           return handleSuccessMapList(getService().getBill(map));
-        }catch(Exception e){
-           return (MapListResponse)handleException(e, new MapResponse());
-        }
-    }
-
-    // @GET @Path("/getBillingStatements/{periodId}")
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public MapResponse billingDetails(@PathParam("periodId") String periodId, @PathParam("memberId") String memberId) {
-    //     try{
-    //        return handleSuccessMap(getService().getBill(Long.parseLong(periodId));
-    //     }catch(Exception e){
-    //        return (MapResponse)handleException(e, new MapResponse());
-    //     }
-    // }
-
-
-    // @GET @Path("/periodYear")
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public StringListResponse periodYear(){
-    //     try{
-    //         return handleSuccessListString(getService().getPeriodYear());
-    //     }catch(Exception e){
-    //         return (StringListResponse)handleException(e, new StringListResponse());
-    //     }
-    // }
-
-    // @GET @Path("/periodByYear/{yearId}")
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public MapListResponse period(@PathParam("yearId") String yearId){
-    //     try{
-    //         return handleSuccessMapList(getService().getPeriodByYear(yearId));
-    //     }catch(Exception e){
-    //         return (MapListResponse)handleException(e, new MapListResponse());
-    //     }
-    // }
-
-    // @GET @Path("/memberBillList/{periodId}")
-    // @Produces(MediaType.APPLICATION_JSON)
-    // public MapListResponse memberList(@PathParam("periodId") String periodId){
-    //     try{
-    //         return handleSuccessMapList(getService().getMemberBillList(Long.parseLong(periodId)));
-    //     }catch(Exception e){
-    //         return (MapListResponse)handleException(e, new MapListResponse());
-    //     }
-    // }
+ 
 
 
 
