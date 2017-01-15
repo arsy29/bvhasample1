@@ -15,23 +15,23 @@ import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 import com.bvha.billing.reports.pojo.*;
 import java.util.List;
 import java.util.Map;
+import java.io.InputStream;
 
 
 public class PDFGenerator{
-	private byte[] report = null;
-	public PDFGenerator(List<Object> listParameter, Map mapParameter, String jasperReport) throws Exception{
-		JRBeanCollectionDataSource beanCollection = new JRBeanCollectionDataSource(listParameter);
-		try{
-			JasperPrint print = JasperFillManager.fillReport(jasperReport, mapParameter, beanCollection);
-	        this.report = JasperExportManager.exportReportToPdf(print);
+	private JasperPrint print;
+	public PDFGenerator(JRBeanCollectionDataSource dateSource, Map mapParameter, String jasperReport) throws Exception{
+		try(InputStream stream = getClass().getResourceAsStream(jasperReport)){
+			print = JasperFillManager.fillReport(stream, mapParameter, dateSource);
+			// JasperPrint print = JasperFillManager.fillReport("C:\\Users\\MrSplendid\\JaspersoftWorkspace\\MyReports\\Blank_A4.jasper", mapParameter, beanCollection);
 		}catch(Exception e){
 			e.printStackTrace();
 			throw e;
 		}
 	}
 
-	public byte[] getPDF(){
-		return this.report;
+	public byte[] getPDF() throws Exception{
+		return JasperExportManager.exportReportToPdf(print);
 	}
 
 

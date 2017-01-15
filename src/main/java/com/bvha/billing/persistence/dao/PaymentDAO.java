@@ -1,7 +1,7 @@
 package com.bvha.billing.persistence.dao;
 
 
-import com.bvha.billing.persistence.core.SQLConnectionFactory;
+import com.bvha.billing.persistence.SQLConnectionFactory;
 import org.apache.ibatis.session.SqlSession;
 import java.util.Map;
 import java.util.HashMap;

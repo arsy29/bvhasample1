@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
 import com.bvha.billing.persistence.dao.ReportsDAO;
 import com.bvha.billing.api.API;
 import com.bvha.billing.reports.PDFGenerator;
-import com.bvha.billing.reports.pojo.BillingStatementPojo;
+import com.bvha.billing.reports.helper.BillingStatementHelper;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import java.io.ByteArrayInputStream;
 
@@ -25,8 +25,10 @@ import java.io.ByteArrayInputStream;
 @Path("/reports")
 public class ReportsAPI extends API{
 
+  private final String BILLING_STATEMENT = "/jasper/billing_statement.jasper";
 
     private ReportsDAO dao;
+    private BillingStatementHelper billingStatementHelper;
     /**
      * Method handling HTTP GET requests. The returned object will be sent
      * to the client as "text/plain" media type.
@@ -40,29 +42,30 @@ public class ReportsAPI extends API{
         return dao;
     }
 
+    private BillingStatementHelper getBillingStatementHelper(){
+      if(billingStatementHelper == null){
+        billingStatementHelper = new BillingStatementHelper();
+      }
+
+      return billingStatementHelper;
+    }
+
 
     @POST @Path("/billing-statement")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/pdf")
-    public Response billingStatement(Map reponse) throws Exception{
+    public Response billingStatement(Map map) throws Exception{
         ResponseBuilder response = null;
         try{
-           List<Map> memberList = getService().getBillAll(reponse);
-           List<Object> pojoList = new ArrayList<Object>();
-           Iterator memberIterator = memberList.iterator();
-           while(memberIterator.hasNext()){
-                Map pojo1, pojo2 = null, pojo3 = null;
-                pojo1 = (Map)memberIterator.next();
-                if(memberIterator.hasNext()){
-                    pojo2 = (Map)memberIterator.next();
-                    if(memberIterator.hasNext()){
-                        pojo3 = (Map)memberIterator.next();
-                    }
-                }
-                pojoList.add(new BillingStatementPojo(pojo1, pojo2, pojo3));
-           }
-           byte[] pdf = new PDFGenerator(pojoList, reponse, "C:\\Billing_Statement2.jasper").getPDF();
-           ByteArrayInputStream inputStream = new ByteArrayInputStream(pdf);
+          List<Map> memberList;
+          if(map.get("list") == null){
+             memberList = getService().getBillAll(map);
+          }
+          else{
+            memberList = getService().getBill(map);
+          }
+           byte[] pdf = new PDFGenerator(getBillingStatementHelper().transformToDataSource(memberList), map, BILLING_STATEMENT).getPDF();
+           ByteArrayInputStream inputStream = new ByteArrayInputStream( pdf );
            response = Response.ok((Object) inputStream);
            response.type("application/pdf");
            response.header("Content-Disposition",  "filename=billing_statement");
@@ -70,7 +73,6 @@ public class ReportsAPI extends API{
             throw e;
         }
        return response.build();
-
     } 
 
  
