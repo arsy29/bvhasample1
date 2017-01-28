@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bvha.billing.persistence.mapper.dashboard">
+	<select id="BillCompletionRate" resultType="hashmap">
+		SELECT 
+		    billing_period,
+		    SUM(CASE
+		        WHEN
+		            previous_payment &gt; 0
+		                AND previous_payment &lt; previous_total
+		        THEN
+		            1
+		        ELSE 0
+		    END) AS underpaid,
+		    SUM(CASE
+		        WHEN previous_payment &gt;= previous_total THEN 1
+		        ELSE 0
+		    END) AS paid,
+		    SUM(CASE
+		        WHEN previous_payment = 0 THEN 1
+		        ELSE 0
+		    END) AS unpaid,
+		    COUNT(billing_details.id) AS total
+		FROM
+		    billing_details
+		where
+			billing_period = #{periodId}
+		GROUP BY billing_period;
+	</select>
+
+	<select id="BillCompletionGraph" resultType="hashmap" parameterType="hashmap">
+		SELECT 
+		    billing_period,
+		    SUM(CASE
+		        WHEN
+		            previous_payment &gt; 0
+		                AND previous_payment &lt; previous_total
+		        THEN
+		            1
+		        ELSE 0
+		    END) AS underpaid,
+		    SUM(CASE
+		        WHEN previous_payment &gt;= previous_total THEN 1
+		        ELSE 0
+		    END) AS paid,
+		    SUM(CASE
+		        WHEN previous_payment = 0 THEN 1
+		        ELSE 0
+		    END) AS unpaid,
+		    COUNT(billing_details.id) AS total
+		FROM
+		    billing_details
+		where
+			billing_period &lt;= #{periodId}
+		GROUP BY billing_period
+		limit 5;
+	</select>
+
+	<select id="CollectionGraph" resultType="hashmap" parameterType="hashmap">
+		SELECT 
+		    billing_period.PERIOD_DATE as periodDate, SUM(amount) as amount
+		FROM
+		    payment
+		        INNER JOIN
+		    billing_period ON billing_period.id = payment.billing_period
+		WHERE
+			billing_period &lt;= #{periodId}
+		GROUP BY payment.billing_period
+		limit 5;
+	</select>
+
+
+</mapper>

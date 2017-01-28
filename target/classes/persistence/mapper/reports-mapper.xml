@@ -42,7 +42,7 @@
       billing.water_amount as waterAmount,
       billing.previous_total as previousTotal,
       billing.with_Bond as withBond,
-      billing.other_desc as otherDesc,
+      IFNULL(billing.other_desc,'') as otherDesc,
       billing.other_amount as otherAmount,
       billing.current_total as currentTotal,
       billing.grand_total as grandTotal,
@@ -70,7 +70,7 @@
       billing.water_amount as waterAmount,
       billing.previous_total as previousTotal,
       billing.with_Bond as withBond,
-      billing.other_desc as otherDesc,
+      IFNULL(billing.other_desc,'') as otherDesc,
       billing.other_amount as otherAmount,
       billing.current_total as currentTotal,
       billing.grand_total as grandTotal,
@@ -91,7 +91,31 @@
     ;
   </select>
 
+  
+  <select id="BillingReports" resultType="com.bvha.billing.reports.pojo.BillingReportPojo">
+    SELECT 
+    concat(lpad(member.id,3, '0'), ' - ' , member.LNAME , ', ' , member.fname) as name,
+    curr_reading as presentReading,
+    prev_reading as previousReading,
+    curr_reading - prev_reading as totalConsumed,
+    water_amount as amount,
+    previous_total as balance,
+    assoc_fee as assocFee,
+    previous_payment as collection,
+    grand_total as receivable
+    FROM billing_details billing inner join member on billing.member = member.id where billing_period = #{periodId};
+  </select>
 
+ <select id="PaymentReports" resultType="com.bvha.billing.reports.pojo.PaymentReportPojo">
+   select 
+      member.id,
+        concat(member.lname,', ', member.fname) as homeOwner,
+        payment_date as receiptDate,
+        receipt_no as receiptNumber,
+        amount as receiptAmount
+    from payment inner join member on member.id = payment.member
+    where billing_period = #{periodId};
+</select>
 
  
 

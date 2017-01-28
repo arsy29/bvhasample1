@@ -21,5 +21,6 @@
     <mapper resource="/persistence/mapper/member-mapper.xml"/>
      <mapper resource="/persistence/mapper/reports-mapper.xml"/>
      <mapper resource="/persistence/mapper/config-mapper.xml"/>
+     <mapper resource="/persistence/mapper/dashboard-mapper.xml"/>
   </mappers>
 </configuration>

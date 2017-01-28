@@ -14,7 +14,7 @@
   </select>
 
   <insert id="AddPayment">
-    insert into payment(member, billing, amount, payment_date, receipt_no) values (#{memberId}, #{billingId}, #{amount}, #{paymentDate}, #{receiptNo})
+    insert into payment(member, billing, amount, payment_date, receipt_no, billing_period) values (#{memberId}, #{billingId}, #{amount}, #{paymentDate}, #{receiptNo}, #{billingPeriod})
   </insert>
 
   <insert id="UpdatePayment">
