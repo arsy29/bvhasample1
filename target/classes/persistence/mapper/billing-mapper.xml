@@ -30,6 +30,7 @@
   <select id="BillingYear" resultType="java.lang.String" >
     select distinct period_year as periodYear 
     from billing_period 
+    where status != 'S'
     order by period_year desc
   </select>
 
@@ -40,7 +41,8 @@
     from
         billing_period
     where
-        PERIOD_YEAR = #{periodYear}
+        PERIOD_YEAR = #{periodYear} 
+        AND status != 'S'
     order by period_month desc
   </select>
 

@@ -18,6 +18,7 @@ import com.bvha.billing.reports.PDFGenerator;
 import com.bvha.billing.reports.helper.BillingStatementHelper;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import java.io.ByteArrayInputStream;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /**
  * Root resource (exposed at "BillingAPI" path)
@@ -26,6 +27,8 @@ import java.io.ByteArrayInputStream;
 public class ReportsAPI extends API{
 
   private final String BILLING_STATEMENT = "/jasper/billing_statement.jasper";
+  private final String BILLING_REPORTS = "/jasper/billing_report.jasper";
+  private final String PAYMENT_REPORTS = "/jasper/payment_report.jasper";
 
     private ReportsDAO dao;
     private BillingStatementHelper billingStatementHelper;
@@ -76,7 +79,40 @@ public class ReportsAPI extends API{
     } 
 
  
+    @POST @Path("/billing-reports")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/pdf")
+    public Response billingReports(Map map) throws Exception{
+        ResponseBuilder response = null;
+        try{
+           JRBeanCollectionDataSource  sourceData = new JRBeanCollectionDataSource(getService().getBillingReportsData(map));
+           byte[] pdf = new PDFGenerator(sourceData, map, BILLING_REPORTS).getPDF();
+           ByteArrayInputStream inputStream = new ByteArrayInputStream( pdf );
+           response = Response.ok((Object) inputStream);
+           response.type("application/pdf");
+           response.header("Content-Disposition",  "filename=billing_reports");
+        }catch(Exception e){
+            throw e;
+        }
+       return response.build();
+    } 
 
-
+    @POST @Path("/payment-reports")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces("application/pdf")
+    public Response paymentReports(Map map) throws Exception{
+        ResponseBuilder response = null;
+        try{
+           JRBeanCollectionDataSource  sourceData = new JRBeanCollectionDataSource(getService().getPaymentReportData(map));
+           byte[] pdf = new PDFGenerator(sourceData, map, PAYMENT_REPORTS).getPDF();
+           ByteArrayInputStream inputStream = new ByteArrayInputStream( pdf );
+           response = Response.ok((Object) inputStream);
+           response.type("application/pdf");
+           response.header("Content-Disposition",  "filename=payment_reports");
+        }catch(Exception e){
+            throw e;
+        }
+       return response.build();
+    } 
 
 }
