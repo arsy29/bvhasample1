@@ -22,6 +22,9 @@ public class PDFGenerator{
 	private JasperPrint print;
 	public PDFGenerator(JRBeanCollectionDataSource dataSource, Map mapParameter, String jasperReport) throws Exception{
 		try(InputStream stream = getClass().getResourceAsStream(jasperReport)){
+			// System.out.println(dataSource);
+			// System.out.println(mapParameter);
+			// System.out.println(stream);
 			print = JasperFillManager.fillReport(stream, mapParameter, dataSource);
 			// JasperPrint print = JasperFillManager.fillReport("C:\\Users\\MrSplendid\\JaspersoftWorkspace\\MyReports\\Blank_A4.jasper", mapParameter, beanCollection);
 		}catch(Exception e){

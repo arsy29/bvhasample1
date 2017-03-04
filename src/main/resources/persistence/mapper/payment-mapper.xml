@@ -14,20 +14,41 @@
   </select>
 
   <insert id="AddPayment">
-    insert into payment(member, billing, amount, payment_date, receipt_no, billing_period) values (#{memberId}, #{billingId}, #{amount}, #{paymentDate}, #{receiptNo}, #{billingPeriod})
+    insert into payment(member, billing, amount, payment_date, receipt_no, billing_period, payment_type, other) values (#{memberId}, #{billingId}, #{amount}, #{paymentDate}, #{receiptNo}, #{billingPeriod}, #{paymentType}, #{other})
   </insert>
 
-  <insert id="UpdatePayment">
+  <update id="UpdatePayment">
     update payment set member = #{memberId},
       billing = #{billingId},
       amount = #{amount},
       payment_date = #{paymentDate},
-      receipt_no = #{receiptNo}
+      receipt_no = #{receiptNo},
+      payment_type = #{paymentType}
     where id = #{id}
-  </insert>
+  </update>
 
   <delete id="DeletePayment">
     delete from payment where id = #{id}
   </delete>
+
+  <select id="PaymentByPeriodId" resultType="hashmap" parameterType="long">
+SELECT 
+    lname,
+    fname,
+    payment.id,
+    member,
+    payment_type as paymentType,
+    receipt_no,
+    payment.PAYMENT_DATE as paymentDate,
+    amount,
+    payment.billing_period
+FROM
+    payment
+        INNER JOIN
+    member ON payment.member = member.id
+WHERE
+    payment.billing_period = #{periodId}
+  </select>
+
  
 </mapper>

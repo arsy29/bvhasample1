@@ -6,8 +6,9 @@
 <mapper namespace="com.bvha.billing.persistence.mapper.billing">
 
   <select id="BillingDetails" resultType="hashmap" parameterType="hashmap">
-    select id,
+    select billing_details.id,
     	MEMBER as member,
+      member.address,
     	ASSOC_FEE as assocFee,
     	PREV_READING as prevReading,
     	CURR_READING as currReading,
@@ -21,7 +22,7 @@
     	GRAND_TOTAL as grandTotal,
     	PREVIOUS_BILLING_PERIOD as prevBillingId
     from
-    	billing_details
+    	billing_details inner join member on billing_details.member = member.id
     where 
     	BILLING_PERIOD = #{periodId}
     	AND MEMBER = #{memberId}
@@ -37,7 +38,8 @@
   <select id="BillingMonth" resultType="hashmap" parameterType="java.lang.String">
     select ID as id,
         PERIOD_MONTH as periodMonth,
-        period_cutoff as periodCutOff
+        period_cutoff as periodCutOff,
+        status
     from
         billing_period
     where
@@ -72,8 +74,8 @@ where billing.billing_period = #{periodId}
       ,member.lName
       ,member.address
       ,member.with_bond as withBond
-      ,MONTHLY_DUE as assocFee
-      ,MONTHLY_DUE as currentTotal
+      ,billing_details.ASSOC_FEE as assocFee
+      ,billing_details.ASSOC_FEE as currentTotal
       ,curr_reading as prevReading
       ,CURR_READING as currReading
       ,grand_total as previousTotal
@@ -91,14 +93,15 @@ where billing.billing_period = #{periodId}
 
   </select>
 
-  <select id="CheckForDraft" resultType="hashmap">
+  <select id="CheckForExisting" resultType="hashmap">
     select main.* from  (select 1 from dual) tmp left join (select  
       id,
       PERIOD_YEAR as periodYear,
       PERIOD_MONTH as periodMonth,
       PERIOD_DATE as periodDate,
-      PERIOD_CUTOFF as periodCutoff
-    from billing_period where status='S') main  on 1=1;;
+      PERIOD_CUTOFF as periodCutoff,
+      status
+    from billing_period where status=#{status}) main  on 1=1;;
   </select>
 
   <select id="getDraftBillingDetails" resultType="hashmap">
@@ -107,7 +110,7 @@ where billing.billing_period = #{periodId}
       member.lname as lName,
       member.fname as fName,
       member.address as address,
-      member.monthly_due as assocFee,
+      billing_details.ASSOC_FEE as assocFee,
       billing_details.id as billingId,
       billing_details.prev_reading as prevReading,
       billing_details.curr_reading as currReading,

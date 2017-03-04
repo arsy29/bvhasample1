@@ -103,12 +103,22 @@ public class BillingAPI extends API{
     @Produces(MediaType.APPLICATION_JSON)
     public MapResponse checkForDraft(){
         try{
-            return handleSuccessMap(getService().checkForDraft());
+            return handleSuccessMap(getService().getBillingByStatus("S"));
         }catch(Exception e){
             return (MapResponse)handleException(e, new MapResponse());
         }
     }
 
+    @GET @Path("/checkForActive")
+    @Produces(MediaType.APPLICATION_JSON)
+    public MapResponse checkForActive(){
+        try{
+            return handleSuccessMap(getService().getBillingByStatus("A"));
+        }catch(Exception e){
+            return (MapResponse)handleException(e, new MapResponse());
+        }
+    }
+ 
     @POST @Path("/Submit")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

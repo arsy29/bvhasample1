@@ -71,4 +71,14 @@ public class PaymentAPI extends API{
 			return handleException(e, new Response());
 		}
 	}
+
+	@GET @Path("/paymentsByPeriod/{periodId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public MapListResponse paymentsByPeriod(@PathParam("periodId") String periodId){
+		try{
+			return handleSuccessMapList(getService().getPaymentByPeriodId(Long.parseLong(periodId)));
+		}catch(Exception e){
+			return (MapListResponse) handleException(e, new MapListResponse());
+		}
+	}
 }

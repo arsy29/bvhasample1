@@ -48,6 +48,18 @@ public class PaymentDAO {
 		return result;
 	} 
 
+	public List<Map> getPaymentByPeriodId( Long periodId) throws Exception{
+		List<Map> paymentList = null;
+
+		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
+			paymentList = session.selectList("com.bvha.billing.persistence.mapper.payment.PaymentByPeriodId", periodId);
+		}catch(Exception e){
+			throw e;
+		}
+
+		return paymentList;
+	}
+
 	
 }
 

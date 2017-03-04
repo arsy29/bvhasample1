@@ -87,11 +87,11 @@ public class BillingDAO {
 		return bill;
 	}
 
-	public Map checkForDraft() throws Exception{
+	public Map getBillingByStatus(String status) throws Exception{
 		Map bill = new HashMap();
 
 		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
-			Map period = (Map)session.selectOne("com.bvha.billing.persistence.mapper.billing.CheckForDraft");
+			Map period = (Map)session.selectOne("com.bvha.billing.persistence.mapper.billing.CheckForExisting", status);
 			if(period.get("id") == null){
 				return null;
 			}
@@ -131,7 +131,6 @@ public class BillingDAO {
 		return result;
 	}
 
-	
 }
 
 

@@ -114,7 +114,8 @@
         receipt_no as receiptNumber,
         amount as receiptAmount
     from payment inner join member on member.id = payment.member
-    where billing_period = #{periodId};
+    where billing_period = #{periodId}
+    and payment.payment_type = 1;
 </select>
 
  
