@@ -44,7 +44,7 @@ SELECT
     payment.billing_period
 FROM
     payment
-        INNER JOIN
+        LEFT OUTER JOIN
     member ON payment.member = member.id
 WHERE
     payment.billing_period = #{periodId}
