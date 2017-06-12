@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bvha.billing.persistence.mapper.payment">
+  <select id="PaymentByBillingId" resultType="hashmap" parameterType="long">
+    select id,
+      payment_date as paymentDate,
+      receipt_no as receiptNo,
+      amount
+    from payment
+    where billing = #{billingId}
+  </select>
+
+  <insert id="AddPayment">
+<<<<<<< HEAD
+    insert into payment(member, billing, amount, payment_date, receipt_no, billing_period, payment_type, other) values (#{memberId}, #{billingId}, #{amount}, #{paymentDate}, #{receiptNo}, #{billingPeriod}, #{paymentType}, #{other})
+=======
+    insert into payment(member, billing, amount, payment_date, receipt_no, billing_period) values (#{memberId}, #{billingId}, #{amount}, #{paymentDate}, #{receiptNo}, #{billingPeriod})
+>>>>>>> 5ba8a94e650f33db98e4cc99b5de5e4985ecc6d1
+  </insert>
+
+  <update id="UpdatePayment">
+    update payment set member = #{memberId},
+      billing = #{billingId},
+      amount = #{amount},
+      payment_date = #{paymentDate},
+      receipt_no = #{receiptNo},
+      payment_type = #{paymentType}
+    where id = #{id}
+  </update>
+
+  <delete id="DeletePayment">
+    delete from payment where id = #{id}
+  </delete>
+
+  <select id="PaymentByPeriodId" resultType="hashmap" parameterType="long">
+SELECT 
+    lname,
+    fname,
+    payment.id,
+    member,
+    payment_type as paymentType,
+    receipt_no,
+    payment.PAYMENT_DATE as paymentDate,
+    amount,
+    payment.billing_period
+FROM
+    payment
+        LEFT OUTER JOIN
+    member ON payment.member = member.id
+WHERE
+    payment.billing_period = #{periodId}
+  </select>
+
+ 
+</mapper>

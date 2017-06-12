@@ -11,7 +11,10 @@ import javax.ws.rs.core.MediaType;
 import com.bvha.billing.persistence.dao.DashboardDAO;
 import com.bvha.billing.api.dto.Response;
 import com.bvha.billing.api.dto.MapListResponse;
+<<<<<<< HEAD
 import com.bvha.billing.api.dto.MapResponse;
+=======
+>>>>>>> 5ba8a94e650f33db98e4cc99b5de5e4985ecc6d1
 import com.bvha.billing.api.API;
 
 
@@ -29,11 +32,19 @@ public class DashboardAPI extends API{
 
 	@GET @Path("/completion-rate/{periodId}")
 	@Produces(MediaType.APPLICATION_JSON)
+<<<<<<< HEAD
 	public MapResponse billingCompletionRate(@PathParam("periodId") String periodId){
 		try{
 			return handleSuccessMap(getService().getCompletionRate(Long.parseLong(periodId)));
 		}catch(Exception e){
 			return (MapResponse)handleException(e, new MapResponse());
+=======
+	public MapListResponse billingCompletionRate(@PathParam("periodId") String periodId){
+		try{
+			return handleSuccessMapList(getService().getCompletionRate(Long.parseLong(periodId)));
+		}catch(Exception e){
+			return (MapListResponse)handleException(e, new MapListResponse());
+>>>>>>> 5ba8a94e650f33db98e4cc99b5de5e4985ecc6d1
 		}
 	}
 	@GET @Path("/completion-graph/{periodId}")
@@ -54,6 +65,7 @@ public class DashboardAPI extends API{
 			return (MapListResponse)handleException(e, new MapListResponse());
 		}
 	}
+<<<<<<< HEAD
 	@GET @Path("/outstanding/{periodId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public MapListResponse outstandingMembers(@PathParam("periodId")String periodId){
@@ -72,4 +84,6 @@ public class DashboardAPI extends API{
 			return (MapListResponse)handleException(e, new MapListResponse());
 		}
 	}
+=======
+>>>>>>> 5ba8a94e650f33db98e4cc99b5de5e4985ecc6d1
 }

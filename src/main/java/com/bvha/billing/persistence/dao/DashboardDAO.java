@@ -8,10 +8,17 @@ import java.util.List;
 
 public class DashboardDAO{
 
+<<<<<<< HEAD
 	public Map getCompletionRate(long periodId) throws Exception{
 		Map data = null;
 		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
 			data = session.selectOne("com.bvha.billing.persistence.mapper.dashboard.BillCompletionRate", periodId);
+=======
+	public List<Map> getCompletionRate(long periodId) throws Exception{
+		List<Map> data = null;
+		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
+			data = session.selectList("com.bvha.billing.persistence.mapper.dashboard.BillCompletionRate", periodId);
+>>>>>>> 5ba8a94e650f33db98e4cc99b5de5e4985ecc6d1
 		}catch(Exception e){
 			e.printStackTrace();
 			throw e;
@@ -42,6 +49,7 @@ public class DashboardDAO{
 		return data;
 	}
 
+<<<<<<< HEAD
 	public List<Map> getOutstanding(long periodId) throws Exception{
 		List<Map> data = null;
 		try(SqlSession session = SQLConnectionFactory.getSession().openSession()){
@@ -65,4 +73,6 @@ public class DashboardDAO{
 		return data;
 	}
 
+=======
+>>>>>>> 5ba8a94e650f33db98e4cc99b5de5e4985ecc6d1
 }
