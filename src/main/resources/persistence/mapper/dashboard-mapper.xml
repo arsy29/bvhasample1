@@ -33,11 +33,7 @@
 
 	<select id="BillCompletionGraph" resultType="hashmap" parameterType="hashmap">
 		SELECT 
-<<<<<<< HEAD
 		    billing_period.PERIOD_DATE as periodDate,
-=======
-		    billing_period,
->>>>>>> 5ba8a94e650f33db98e4cc99b5de5e4985ecc6d1
 		    SUM(CASE
 		        WHEN
 		            previous_payment &gt; 0
@@ -57,10 +53,7 @@
 		    COUNT(billing_details.id) AS total
 		FROM
 		    billing_details
-<<<<<<< HEAD
 		    inner join billing_period on billing_details.billing_period = billing_period.id
-=======
->>>>>>> 5ba8a94e650f33db98e4cc99b5de5e4985ecc6d1
 		where
 			billing_period &lt;= #{periodId}
 		GROUP BY billing_period
@@ -80,7 +73,6 @@
 		limit 5;
 	</select>
 
-<<<<<<< HEAD
 	<select id="OutstandingMembers" resultType="hashmap">
 		SELECT 
 		    member.id,
@@ -129,7 +121,5 @@
 		 limit 5
 	</select>
 
-=======
->>>>>>> 5ba8a94e650f33db98e4cc99b5de5e4985ecc6d1
 
 </mapper>

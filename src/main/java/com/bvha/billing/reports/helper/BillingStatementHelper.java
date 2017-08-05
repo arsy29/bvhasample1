@@ -204,7 +204,7 @@ public class BillingStatementHelper{
         PaymentPojo paymentPojo = new PaymentPojo();
         paymentPojo.setPaymentAmount((double)map.get("paymentAmount"));
         paymentPojo.setPaymentDate((Date)map.get("paymentDate"));
-        paymentPojo.setReceiptNo(map.get("receiptNo").toString());
+        paymentPojo.setReceiptNo(map.get("receiptNo")+"");
         return paymentPojo;
 	}
 

@@ -8,6 +8,8 @@ public class PaymentReportPojo{
     private Date receiptDate;
     private String receiptNumber;
     private Double receiptAmount;
+    private String transactionType;
+    private int header = 1;
 
     /**
      * @return the id
@@ -79,4 +81,35 @@ public class PaymentReportPojo{
     public void setReceiptAmount(Double receiptAmount) {
         this.receiptAmount = receiptAmount;
     }
+
+	public String getTransactionType() {
+		return transactionType;
+	}
+	
+	private String[] transactionTypeMap = { "All",
+		  "Water Dues",
+		  "Water Meter",
+		  "Shooting Fee",
+		  "Membership Fee",
+		  "Maintenance Fee",
+		  "ID",
+		  "Development Fee",
+		  "Court Use",
+		  "Construction Fee",
+		  "Construction Bond",
+		  "Sticker",
+		  "Other"
+		  };
+	
+	public void setTransactionType(int transactionType) {
+		this.transactionType = transactionTypeMap[transactionType];
+	}
+
+	public int getHeader() {
+		return header;
+	}
+
+	public void setHeader(int header) {
+		this.header = header;
+	}
 }

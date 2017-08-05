@@ -20,7 +20,7 @@ import java.io.InputStream;
 
 public class PDFGenerator{
 	private JasperPrint print;
-	public PDFGenerator(JRBeanCollectionDataSource dataSource, Map mapParameter, String jasperReport) throws Exception{
+	public PDFGenerator(JRBeanCollectionDataSource dataSource, Map<String,Object> mapParameter, String jasperReport) throws Exception{
 		try(InputStream stream = getClass().getResourceAsStream(jasperReport)){
 			// System.out.println(dataSource);
 			// System.out.println(mapParameter);

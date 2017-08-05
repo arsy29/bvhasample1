@@ -36,7 +36,7 @@
       member.lname,
       member.address,
       billing.id as b_id,
-      billing.assoc_fee as assocFee,
+      member.monthly_due as assocFee,
       billing.prev_reading as prevReading,
       billing.curr_reading as currReading,
       billing.water_amount as waterAmount,
@@ -64,7 +64,7 @@
       member.lname,
       member.address,
       billing.id as b_id,
-      billing.assoc_fee as assocFee,
+      member.monthly_due as assocFee,
       billing.prev_reading as prevReading,
       billing.curr_reading as currReading,
       billing.water_amount as waterAmount,
@@ -101,6 +101,8 @@
     water_amount as amount,
     previous_total as balance,
     assoc_fee as assocFee,
+    other_amount as other,
+    billing.current_total as total,
     previous_payment as collection,
     grand_total as receivable
     FROM billing_details billing inner join member on billing.member = member.id where billing_period = #{periodId};
@@ -109,13 +111,16 @@
  <select id="PaymentReports" resultType="com.bvha.billing.reports.pojo.PaymentReportPojo">
    select 
       member.id,
-        concat(member.lname,', ', member.fname) as homeOwner,
-        payment_date as receiptDate,
-        receipt_no as receiptNumber,
-        amount as receiptAmount
-    from payment inner join member on member.id = payment.member
-    where billing_period = #{periodId}
-    and payment.payment_type = 1;
+      case when member.lname is null
+      	then 'n/a'
+      	else concat(member.lname,', ', member.fname)
+      end as homeOwner,
+      payment_date as receiptDate,
+      receipt_no as receiptNumber,
+      amount as receiptAmount,
+      payment_type as transactionType
+    from payment left outer join member on member.id = payment.member
+    where billing_period = #{periodId};
 </select>
 
  

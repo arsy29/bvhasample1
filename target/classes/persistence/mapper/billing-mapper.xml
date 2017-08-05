@@ -68,26 +68,26 @@ where billing.billing_period = #{periodId}
    </select>
 
   <select id="GenerateBill" resultType="hashmap">
-  select 
+   select 
       member.id as id
       ,member.fName
       ,member.lName
       ,member.address
       ,member.with_bond as withBond
-      ,billing_details.ASSOC_FEE as assocFee
-      ,billing_details.ASSOC_FEE as currentTotal
-      ,curr_reading as prevReading
-      ,CURR_READING as currReading
-      ,grand_total as previousTotal
+      ,member.MONTHLY_DUE as assocFee
+      ,member.MONTHLY_DUE as currentTotal
+      ,IFNULL(curr_reading,0) as prevReading
+      ,IFNULL(curr_reading,0) as currReading
+      ,IFNULL(grand_total,0) as previousTotal
       ,0 as waterAmount
       ,0 as otherAmount
       ,IFNULL(payment.amount,0) as previousPaymentTotal
-      ,grand_total - IFNULL(payment.amount,0) as remaining
-      ,billing_period as prevBillingPeriod
-      ,ASSOC_FEE + (grand_total - IFNULL(payment.amount,0)) as grandTotal
-  from billing_details
-      inner join member on billing_details.member = member.id
-      inner join (select id from billing_period order by PERIOD_YEAR desc, PERIOD_MONTH desc limit 1) period on period.id  = billing_details.billing_period
+      ,IFNULL(grand_total,0) - IFNULL(payment.amount,0) as remaining
+      ,billing_details.id as prevBillingPeriod
+      ,member.MONTHLY_DUE + (IFNULL(grand_total,0) - IFNULL(payment.amount,0)) as grandTotal
+   from member
+      left outer join (billing_details
+      inner join (select id from billing_period order by PERIOD_YEAR desc, PERIOD_MONTH desc limit 1) period on period.id  = billing_details.billing_period)  on billing_details.member = member.id
       left outer join (select billing, sum(amount) as amount, count(id) as count from payment group by billing) as payment on billing_details.id = payment.BILLING
     where member.status = 'A';
 
@@ -149,6 +149,7 @@ where billing.billing_period = #{periodId}
     insert into billing_details (
       billing_period
       ,member
+      ,assoc_fee
       ,curr_reading
       ,prev_reading
       ,water_amount
@@ -165,6 +166,7 @@ where billing.billing_period = #{periodId}
      (
       #{model.periodId}
       ,#{model.id}
+      ,#{model.assocFee}
       ,#{model.currReading}
       ,#{model.prevReading}
       ,#{model.waterAmount}
