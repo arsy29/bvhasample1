@@ -61,8 +61,8 @@ public class BillingStatementHelper{
                 billingPojo.setBreakdownAmount3(0);
             }else{
                 billingPojo.setBreakdown2(20);
-                billingPojo.setBreakdown3(remaining);
                 remaining -= 20;
+                billingPojo.setBreakdown3(remaining);
                 totalWater += 900 + (remaining * 50);
                 billingPojo.setBreakdownAmount2(900);
                 billingPojo.setBreakdownAmount3(remaining * 50);
@@ -116,8 +116,8 @@ public class BillingStatementHelper{
                     billingPojo.setBreakdownAmount32(0);
                 }else{
                     billingPojo.setBreakdown22(20);
-                    billingPojo.setBreakdown32(remaining);
                     remaining -= 20;
+                    billingPojo.setBreakdown32(remaining);
                     totalWater += 900 + (remaining * 50);
                     billingPojo.setBreakdownAmount22(900);
                     billingPojo.setBreakdownAmount32(remaining * 50);
@@ -171,8 +171,8 @@ public class BillingStatementHelper{
                     billingPojo.setBreakdownAmount33(0);
                 }else{
                     billingPojo.setBreakdown23(20);
-                    billingPojo.setBreakdown33(remaining);
                     remaining -= 20;
+                    billingPojo.setBreakdown33(remaining);
                     totalWater += 900 + (remaining * 50);
                     billingPojo.setBreakdownAmount23(900);
                     billingPojo.setBreakdownAmount33(remaining * 50);

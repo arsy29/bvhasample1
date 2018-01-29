@@ -120,7 +120,8 @@
       amount as receiptAmount,
       payment_type as transactionType
     from payment left outer join member on member.id = payment.member
-    where billing_period = #{periodId};
+    where billing_period = #{periodId}
+    order by receiptDate,receiptNumber asc
 </select>
 
  
